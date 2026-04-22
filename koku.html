@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ 虚空教・適性診断</title>
+    <style>
+        /* 虚空をイメージしたダークなデザイン */
+        body {
+            background: #0d0d0d;
+            color: #e0e0e0;
+            text-align: center;
+            font-family: 'Hiragino Mincho ProN', 'serif';
+            overflow: hidden;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 { font-size: 1.8rem; color: #8a2be2; margin-bottom: 20px; text-shadow: 0 0 10px #8a2be2; }
+        h2 { font-size: 1.2rem; color: #fff; }
+        p { font-size: 1rem; line-height: 1.6; }
+
+        button {
+            background: rgba(138, 43, 226, 0.1);
+            color: white;
+            border: 1px solid #8a2be2;
+            padding: 12px 24px;
+            margin: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.4s;
+            border-radius: 2px;
+            min-width: 250px;
+        }
+        button:hover {
+            background: #8a2be2;
+            color: white;
+            box-shadow: 0 0 20px #8a2be2;
+        }
+
+        /* 虚空演出 */
+        .void-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, #1a0033 0%, #000 80%);
+            z-index: -2;
+        }
+
+        /* 顎（あご）が降ってくるエフェクト用 */
+        .falling-ago {
+            position: fixed;
+            cursor: pointer;
+            z-index: 100;
+            font-weight: bold;
+            color: #fff;
+            user-select: none;
+            filter: drop-shadow(0 0 5px #8a2be2);
+        }
+
+        #result-area { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="void-bg"></div>
+
+<div id="game-area">
+    <h1>⚔️ 虚空教・適性診断</h1>
+    <div id="question"></div>
+    <div id="choices"></div>
+</div>
+
+<div id="result-area">
+    <div id="result"></div>
+    <br>
+    <button onclick="share()">虚空の託宣をXに刻む</button><br>
+    <button onclick="location.reload()">再び虚空へ</button>
+</div>
+
+<script>
+let step = 0;
+let resultObj = null;
+let agoCount = 0;
+// 剣持要素：顎(ago), 語彙(words), ロリ(loli), 虚空(void), プロレス(fight)
+let type = { ago: 0, words: 0, loli: 0, void: 0, fight: 0 };
+
+const questions = [
+    {q:"目の前に鋭利な顎があります。どうする？",choices:[{text:"研ぐ",type:"ago"},{text:"刺さってみる",type:"fight"},{text:"無視して語彙で殴る",type:"words"}]},
+    {q:"「ロリコン」と呼ばれました。あなたの返答は？",choices:[{text:"「僕は教育者です」",type:"loli"},{text:"「…はい（諦め）」",type:"fight"},{text:"「違います」",type:"words"}]},
+    {q:"あなたが一番落ち着く場所は？",choices:[{text:"虚空",type:"void"},{text:"道場",type:"ago"},{text:"マクドナルド",type:"fight"}]},
+    {q:"竹刀の使い道といえば？",choices:[{text:"剣道",type:"ago"},{text:"マイクスタンド",type:"words"},{text:"部屋のオブジェ",type:"fight"}]},
+    {q:"配信中、リスナーが煽ってきました。",choices:[{text:"倍の語彙で論破する",type:"words"},{text:"「おい！」とキレ芸を見せる",type:"fight"},{text:"静かにブロック（虚空送り）",type:"void"}]},
+    {q:"16歳の高校2年生がもう数年続いています。",choices:[{text:"それが真理だ",type:"void"},{text:"時の流れが歪んでいる",type:"ago"},{text:"成長を止めただけだ",type:"words"}]},
+    {q:"お腹が空きました。何を食べる？",choices:[{text:"ハッピーセット",type:"loli"},{text:"コンビニのパン",type:"fight"},{text:"虚無",type:"void"}]},
+    {q:"目の前に幼い少女がいます。",choices:[{text:"守るべき対象（健全）",type:"loli"},{text:"将来のリスナー候補",type:"words"},{text:"特に何も思わない",type:"void"}]},
+    {q:"あなたにとっての「十六夜」とは？",choices:[{text:"魂の武器",type:"ago"},{text:"ただの単語",type:"words"},{text:"月が綺麗ですね",type:"void"}]},
+    {q:"最後に。あなたは虚空を信じますか？",choices:[{text:"信じる",type:"void"},{text:"僕自身が虚空だ",type:"void"},{text:"顎の方が信じられる",type:"ago"}]}
+];
+
+function showQuestion() {
+    if (step >= questions.length) {
+        showResult();
+        return;
+    }
+    let q = questions[step];
+    document.getElementById("question").innerHTML = `<h2>第${step + 1}問<br>${q.q}</h2>`;
+    let html = "";
+    q.choices.forEach(c => {
+        html += `<button onclick="answer('${c.type}')">${c.text}</button><br>`;
+    });
+    document.getElementById("choices").innerHTML = html;
+}
+
+function answer(t) {
+    type[t]++;
+    spawnAgo();
+    step++;
+    showQuestion();
+}
+
+// 
+function spawnAgo() {
+    let b = document.createElement("div");
+    b.className = "falling-ago";
+    b.innerText = "▽";
+    b.style.left = Math.random() * 90 + "%";
+    b.style.top = Math.random() * 90 + "%";
+    b.style.fontSize = (Math.random() * 20 + 30) + "px";
+    b.onclick = () => {
+        b.remove();
+        agoCount++;
+        if (agoCount >= 10) unlockSecret();
+    };
+    document.body.appendChild(b);
+}
+
+function unlockSecret() {
+    resultObj = { title: "🎙 剣持刀也 本人", desc: "お疲れ様です、剣持さん。早く配信を始めてください。", rarity: "LEGEND" };
+    showFinal();
+}
+
+function showResult() {
+    const table = {
+        ago:   [{title:"鋭利な信徒", desc:"あなたの顎はもはや凶器です。すれ違う人を傷つけないよう注意してください。", rarity:"SR"}, {title:"物理特化型教祖", desc:"言葉より先に顎が出るタイプ。もはや人間を辞めています。", rarity:"SSR"}],
+        words: [{title:"辞書を編む者", desc:"圧倒的語彙力。マシントークで周囲を黙らせる才能があります。", rarity:"SR"}, {title:"言葉の魔術師", desc:"あなたのラップで世界が揺れます。韻を踏まないと死ぬ病です。", rarity:"SSR"}],
+        loli:  [{title:"自称・教育者", desc:"「ロリコンではない」その言葉の裏に潜む情熱を、警察は見逃しません。", rarity:"R"}, {title:"幼女の守護霊", desc:"あまりにも純粋（？）な守護心。通報されないよう気をつけて。", rarity:"SSR"}],
+        void:  [{title:"虚空の住人", desc:"存在感が希薄ですが、内に秘めたカリスマは本物です。虚空を愛しなさい。", rarity:"SR"}, {title:"虚空教・大司教", desc:"すべては虚空に帰します。あなたの言葉はもはや宗教です。", rarity:"SSR+"}],
+        fight: [{title:"プロレスラー", desc:"煽られてからが本番。リスナーとの殴り合いに悦びを感じるタイプです。", rarity:"R"}, {title:"炎のエンターテイナー", desc:"どんな逆境もエンタメに変える、不屈の精神の持ち主です。", rarity:"SR"}]
+    };
+
+    let max = "void";
+    for (let k in type) if (type[k] > type[max]) max = k;
+    let list = table[max];
+    resultObj = list[Math.floor(Math.random() * list.length)];
+
+    // 低確率で特殊結果
+    if (Math.random() < 0.05) resultObj = {title:"咎人の片割れ", desc:"相方を探していますか？ピーナッツくんによろしく。", rarity:"SSR+"};
+
+    showFinal();
+}
+
+function showFinal() {
+    document.getElementById("game-area").style.display = "none";
+    document.getElementById("result-area").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <h1 style="font-size:3rem;">${resultObj.title}</h1>
+        <h2 style="color:#8a2be2;">【適合ランク：${resultObj.rarity}】</h2>
+        <p style="font-size:1.2rem;">${resultObj.desc}</p>
+    `;
+}
+
+function share() {
+    if (!resultObj) return;
+    let text = `虚空教・適性診断の結果は…\n【${resultObj.title}（${resultObj.rarity}）】でした！\n#虚空教診断 #剣持刀也\n`;
+    window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text + location.href));
+}
+
+showQuestion();
+</script>
+</body>
+</html>
