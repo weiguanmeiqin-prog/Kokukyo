@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚔️ 虚空教・適性診断</title>
     <style>
-        /* 虚空をイメージしたダークなデザイン */
         body {
             background: #0d0d0d;
             color: #e0e0e0;
@@ -19,11 +18,9 @@
             align-items: center;
             height: 100vh;
         }
-
         h1 { font-size: 1.8rem; color: #8a2be2; margin-bottom: 20px; text-shadow: 0 0 10px #8a2be2; }
         h2 { font-size: 1.2rem; color: #fff; }
         p { font-size: 1rem; line-height: 1.6; }
-
         button {
             background: rgba(138, 43, 226, 0.1);
             color: white;
@@ -36,13 +33,7 @@
             border-radius: 2px;
             min-width: 250px;
         }
-        button:hover {
-            background: #8a2be2;
-            color: white;
-            box-shadow: 0 0 20px #8a2be2;
-        }
-
-        /* 虚空演出 */
+        button:hover { background: #8a2be2; color: white; box-shadow: 0 0 20px #8a2be2; }
         .void-bg {
             position: fixed;
             top: 0; left: 0;
@@ -50,8 +41,6 @@
             background: radial-gradient(circle, #1a0033 0%, #000 80%);
             z-index: -2;
         }
-
-        /* 顎（あご）が降ってくるエフェクト用 */
         .falling-ago {
             position: fixed;
             cursor: pointer;
@@ -61,7 +50,6 @@
             user-select: none;
             filter: drop-shadow(0 0 5px #8a2be2);
         }
-
         #result-area { display: none; }
     </style>
 </head>
@@ -86,7 +74,6 @@
 let step = 0;
 let resultObj = null;
 let agoCount = 0;
-// 剣持要素：顎(ago), 語彙(words), ロリ(loli), 虚空(void), プロレス(fight)
 let type = { ago: 0, words: 0, loli: 0, void: 0, fight: 0 };
 
 const questions = [
@@ -123,7 +110,6 @@ function answer(t) {
     showQuestion();
 }
 
-// 
 function spawnAgo() {
     let b = document.createElement("div");
     b.className = "falling-ago";
@@ -146,21 +132,17 @@ function unlockSecret() {
 
 function showResult() {
     const table = {
-        ago:   [{title:"鋭利な信徒", desc:"あなたの顎はもはや凶器です。すれ違う人を傷つけないよう注意してください。", rarity:"SR"}, {title:"物理特化型教祖", desc:"言葉より先に顎が出るタイプ。もはや人間を辞めています。", rarity:"SSR"}],
-        words: [{title:"辞書を編む者", desc:"圧倒的語彙力。マシントークで周囲を黙らせる才能があります。", rarity:"SR"}, {title:"言葉の魔術師", desc:"あなたのラップで世界が揺れます。韻を踏まないと死ぬ病です。", rarity:"SSR"}],
-        loli:  [{title:"自称・教育者", desc:"「ロリコンではない」その言葉の裏に潜む情熱を、警察は見逃しません。", rarity:"R"}, {title:"幼女の守護霊", desc:"あまりにも純粋（？）な守護心。通報されないよう気をつけて。", rarity:"SSR"}],
-        void:  [{title:"虚空の住人", desc:"存在感が希薄ですが、内に秘めたカリスマは本物です。虚空を愛しなさい。", rarity:"SR"}, {title:"虚空教・大司教", desc:"すべては虚空に帰します。あなたの言葉はもはや宗教です。", rarity:"SSR+"}],
-        fight: [{title:"プロレスラー", desc:"煽られてからが本番。リスナーとの殴り合いに悦びを感じるタイプです。", rarity:"R"}, {title:"炎のエンターテイナー", desc:"どんな逆境もエンタメに変える、不屈の精神の持ち主です。", rarity:"SR"}]
+        ago:   [{title:"鋭利な信徒", desc:"あなたの顎はもはや凶器です。", rarity:"SR"}, {title:"物理特化型教祖", desc:"言葉より先に顎が出るタイプ。", rarity:"SSR"}],
+        words: [{title:"辞書を編む者", desc:"圧倒的語彙力。マシントークで周囲を黙らせます。", rarity:"SR"}, {title:"言葉の魔術師", desc:"あなたのラップで世界が揺れます。", rarity:"SSR"}],
+        loli:  [{title:"自称・教育者", desc:"「ロリコンではない」その言葉の裏の情熱。", rarity:"R"}, {title:"幼女の守護霊", desc:"あまりにも純粋な守護心。", rarity:"SSR"}],
+        void:  [{title:"虚空の住人", desc:"存在感が希薄ですがカリスマは本物。", rarity:"SR"}, {title:"虚空教・大司教", desc:"すべては虚空に帰します。", rarity:"SSR+"}],
+        fight: [{title:"プロレスラー", desc:"煽られてからが本番です。", rarity:"R"}, {title:"炎のエンターテイナー", desc:"どんな逆境もエンタメに変える不屈の精神。", rarity:"SR"}]
     };
-
     let max = "void";
     for (let k in type) if (type[k] > type[max]) max = k;
     let list = table[max];
     resultObj = list[Math.floor(Math.random() * list.length)];
-
-    // 低確率で特殊結果
-    if (Math.random() < 0.05) resultObj = {title:"咎人の片割れ", desc:"相方を探していますか？ピーナッツくんによろしく。", rarity:"SSR+"};
-
+    if (Math.random() < 0.05) resultObj = {title:"咎人の片割れ", desc:"相方を探していますか？", rarity:"SSR+"};
     showFinal();
 }
 
@@ -168,12 +150,15 @@ function showFinal() {
     document.getElementById("game-area").style.display = "none";
     document.getElementById("result-area").style.display = "block";
     document.getElementById("result").innerHTML = `
-        <h1 style="font-size:3rem;">${resultObj.title}</h1>
+        <h1 style="font-size:2.5rem;">${resultObj.title}</h1>
         <h2 style="color:#8a2be2;">【適合ランク：${resultObj.rarity}】</h2>
-        <p style="font-size:1.2rem;">${resultObj.desc}</
+        <p style="font-size:1.1rem;">${resultObj.desc}</p>
+    `;
 }
+
 function share() {
-    let url = "あなたの公開したURLをここに貼る"; 
+    if (!resultObj) return;
+    let url = location.href;
     let text = `虚空教・適性診断の結果は…\n【${resultObj.title}】でした！\n`;
     window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(url) + "&hashtags=虚空教診断,剣持刀也");
 }
