@@ -170,14 +170,12 @@ function showFinal() {
     document.getElementById("result").innerHTML = `
         <h1 style="font-size:3rem;">${resultObj.title}</h1>
         <h2 style="color:#8a2be2;">【適合ランク：${resultObj.rarity}】</h2>
-        <p style="font-size:1.2rem;">${resultObj.desc}</p>
-    `;
+        <p style="font-size:1.2rem;">${resultObj.desc}</
 }
-
 function share() {
-    if (!resultObj) return;
-    let text = `虚空教・適性診断の結果は…\n【${resultObj.title}（${resultObj.rarity}）】でした！\n#虚空教診断 #剣持刀也\n`;
-    window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text + location.href));
+    let url = "あなたの公開したURLをここに貼る"; 
+    let text = `虚空教・適性診断の結果は…\n【${resultObj.title}】でした！\n`;
+    window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(url) + "&hashtags=虚空教診断,剣持刀也");
 }
 
 showQuestion();
