@@ -20,20 +20,41 @@
         }
         h1 { font-size: 1.8rem; color: #8a2be2; margin-bottom: 20px; text-shadow: 0 0 10px #8a2be2; }
         h2 { font-size: 1.2rem; color: #fff; }
-        p { font-size: 1rem; line-height: 1.6; }
+        p { font-size: 1rem; line-height: 1.6; padding: 0 20px; }
+        
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            width: 100%;
+        }
+
         button {
             background: rgba(138, 43, 226, 0.1);
             color: white;
             border: 1px solid #8a2be2;
             padding: 12px 24px;
-            margin: 8px;
             cursor: pointer;
             font-size: 1rem;
             transition: 0.4s;
             border-radius: 2px;
-            min-width: 250px;
+            width: 80%;
+            max-width: 300px;
         }
         button:hover { background: #8a2be2; color: white; box-shadow: 0 0 20px #8a2be2; }
+
+        /* LINE専用カラー */
+        .line-btn {
+            border-color: #06c755;
+            color: #06c755;
+        }
+        .line-btn:hover {
+            background: #06c755;
+            color: white;
+            box-shadow: 0 0 20px #06c755;
+        }
+
         .void-bg {
             position: fixed;
             top: 0; left: 0;
@@ -60,14 +81,16 @@
 <div id="game-area">
     <h1>⚔️ 虚空教・適性診断</h1>
     <div id="question"></div>
-    <div id="choices"></div>
+    <div id="choices" class="btn-container"></div>
 </div>
 
 <div id="result-area">
     <div id="result"></div>
-    <br>
-    <button onclick="share()">虚空の託宣をXに刻む</button><br>
-    <button onclick="location.reload()">再び虚空へ</button>
+    <div class="btn-container">
+        <button onclick="shareX()">𝕏(Twitter)に刻む</button>
+        <button class="line-btn" onclick="shareLine()">LINEで布教する</button>
+        <button onclick="location.reload()">再び虚空へ</button>
+    </div>
 </div>
 
 <script>
@@ -98,7 +121,7 @@ function showQuestion() {
     document.getElementById("question").innerHTML = `<h2>第${step + 1}問<br>${q.q}</h2>`;
     let html = "";
     q.choices.forEach(c => {
-        html += `<button onclick="answer('${c.type}')">${c.text}</button><br>`;
+        html += `<button onclick="answer('${c.type}')">${c.text}</button>`;
     });
     document.getElementById("choices").innerHTML = html;
 }
@@ -152,15 +175,22 @@ function showFinal() {
     document.getElementById("result").innerHTML = `
         <h1 style="font-size:2.5rem;">${resultObj.title}</h1>
         <h2 style="color:#8a2be2;">【適合ランク：${resultObj.rarity}】</h2>
-        <p style="font-size:1.1rem;">${resultObj.desc}</p>
+        <p style="font-size:1.1rem; margin-bottom: 20px;">${resultObj.desc}</p>
     `;
 }
 
-function share() {
+function shareX() {
     if (!resultObj) return;
     let url = location.href;
     let text = `虚空教・適性診断の結果は…\n【${resultObj.title}】でした！\n`;
     window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(url) + "&hashtags=虚空教診断,剣持刀也");
+}
+
+function shareLine() {
+    if (!resultObj) return;
+    let url = location.href;
+    let text = `虚空教・適性診断の結果は…\n【${resultObj.title}（${resultObj.rarity}）】でした！\nあなたも虚空に触れてみませんか？`;
+    location.href = "https://social-plugins.line.me/lineit/share?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(text);
 }
 
 showQuestion();
